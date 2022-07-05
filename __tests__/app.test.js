@@ -19,7 +19,7 @@ describe("news api", () => {
             const topicsArr = body.topics;
             expect(topicsArr.length).toBe(3);
             topicsArr.forEach((topic) =>
-              expect("slug" && "description" in topic).toBe(true)
+              expect("slug" in topic && "description" in topic).toBe(true)
             );
           });
       });
@@ -43,12 +43,12 @@ describe("news api", () => {
           .then(({ body }) => {
             const articleObj = body.article;
             expect(
-              "author" &&
-                "title" &&
-                "article_id" &&
-                "body" &&
-                "topic" &&
-                "created_at" &&
+              "author" in articleObj &&
+                "title" in articleObj &&
+                "article_id" in articleObj &&
+                "body" in articleObj &&
+                "topic" in articleObj &&
+                "created_at" in articleObj &&
                 "votes" in articleObj
             ).toBe(true);
             expect(articleObj.article_id).toBe(1);
@@ -65,7 +65,7 @@ describe("news api", () => {
       });
     });
     describe("PATCH", () => {
-      test("201: returns an updated article object, containing author, title, article_id, body, topic, created_at & incremented votes properties", () => {
+      test("200: returns an updated article object, containing author, title, article_id, body, topic, created_at & incremented votes properties", () => {
         const articleUpdateObj = { inc_votes: 25 };
         const voteIncrement = articleUpdateObj.inc_votes;
         const articleID = 2;
@@ -81,16 +81,16 @@ describe("news api", () => {
             return request(app)
               .patch(`/api/articles/${articleID}`)
               .send(articleUpdateObj)
-              .expect(201)
+              .expect(200)
               .then(({ body }) => {
                 const articleObj = body.article;
                 expect(
-                  "author" &&
-                    "title" &&
-                    "article_id" &&
-                    "body" &&
-                    "topic" &&
-                    "created_at" &&
+                  "author" in articleObj &&
+                    "title" in articleObj &&
+                    "article_id" in articleObj &&
+                    "body" in articleObj &&
+                    "topic" in articleObj &&
+                    "created_at" in articleObj &&
                     "votes" in articleObj
                 ).toBe(true);
                 expect(articleObj.article_id).toBe(articleID);
@@ -98,41 +98,41 @@ describe("news api", () => {
               });
           });
       });
-      test("400: returns a 'Bad request. Request must be an object' message if request is not an object", () => {
-        const invalidUpdate = ["invalid", 3];
+      test("400: returns a 'Bad request. Request must be an object including an inc_votes key with a number value' message if request doesn't contain an inc_votes property", () => {
+        const invalidUpdate = { invalid: 3 };
         return request(app)
           .patch("/api/articles/1")
           .send(invalidUpdate)
           .expect(400)
           .then(({ body }) => {
-            const badRequest = body.msg;
-            expect(badRequest).toBe("Bad request. Request must be an object");
-          });
-      });
-      test("422: returns an 'Unprocessable Entity. Request must include an inc_votes key with a number value' message if request doesn't contain an inc_votes property", () => {
-        const invalidUpdate = { invalid: 3 };
-        return request(app)
-          .patch("/api/articles/1")
-          .send(invalidUpdate)
-          .expect(422)
-          .then(({ body }) => {
             const UnprocessableEnt = body.msg;
             expect(UnprocessableEnt).toBe(
-              "Unprocessable Entity. Request must include an inc_votes key with a number value"
+              "Bad request. Request must be an object including an inc_votes key with a number value"
             );
           });
       });
-      test("422: returns an 'Unprocessable Entity. Request must include an inc_votes key with a number value' message if request contains an inc_votes value that isn't a number", () => {
+      test("400: returns a 'Bad request. Request must be an object including an inc_votes key with a number value' message if request contains an inc_votes value that isn't a number", () => {
         const invalidUpdate = { inc_votes: "sausage" };
         return request(app)
           .patch("/api/articles/1")
           .send(invalidUpdate)
-          .expect(422)
+          .expect(400)
           .then(({ body }) => {
             const UnprocessableEnt = body.msg;
             expect(UnprocessableEnt).toBe(
-              "Unprocessable Entity. Request must include an inc_votes key with a number value"
+              "Bad request. Request must be an object including an inc_votes key with a number value"
             );
+          });
+      });
+      test("404: returns a 'Bad path. Article with given id not found' message if article with given ID is not found in database", () => {
+        const articleUpdateObj = { inc_votes: 25 };
+        return request(app)
+          .patch("/api/articles/99999999")
+          .send(articleUpdateObj)
+          .expect(404)
+          .then(({ body }) => {
+            const badPath = body.msg;
+            expect(badPath).toBe("Bad path. Article with given id not found");
           });
       });
     });

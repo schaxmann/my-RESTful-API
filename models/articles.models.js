@@ -15,18 +15,10 @@ fetchArticle = (article_id) => {
 };
 
 patchArticle = (article_id, requestBody) => {
-  if (Object.prototype.toString.call(requestBody) !== "[object Object]") {
+  if (!requestBody.inc_votes || typeof requestBody.inc_votes !== "number") {
     return Promise.reject({
       status: 400,
-      msg: "Bad request. Request must be an object",
-    });
-  } else if (
-    !requestBody.inc_votes ||
-    typeof requestBody.inc_votes !== "number"
-  ) {
-    return Promise.reject({
-      status: 422,
-      msg: "Unprocessable Entity. Request must include an inc_votes key with a number value",
+      msg: "Bad request. Request must be an object including an inc_votes key with a number value",
     });
   } else {
     return db
@@ -35,6 +27,12 @@ patchArticle = (article_id, requestBody) => {
         [article_id, requestBody.inc_votes]
       )
       .then((article) => {
+        if (!article.rows[0]) {
+          return Promise.reject({
+            status: 404,
+            msg: "Bad path. Article with given id not found",
+          });
+        }
         return article.rows[0];
       });
   }
