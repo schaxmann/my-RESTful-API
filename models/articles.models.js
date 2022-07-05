@@ -14,17 +14,25 @@ fetchArticle = (article_id) => {
     });
 };
 
-patchArticle = (article_id, inc_votes) => {
-  if (!inc_votes || typeof inc_votes !== "number") {
+patchArticle = (article_id, requestBody) => {
+  if (Object.prototype.toString.call(requestBody) !== "[object Object]") {
     return Promise.reject({
       status: 400,
-      msg: "Bad request. Request must include an inc_votes key with a number value",
+      msg: "Bad request. Request must be an object",
+    });
+  } else if (
+    !requestBody.inc_votes ||
+    typeof requestBody.inc_votes !== "number"
+  ) {
+    return Promise.reject({
+      status: 422,
+      msg: "Unprocessable Entity. Request must include an inc_votes key with a number value",
     });
   } else {
     return db
       .query(
         "UPDATE articles SET votes = votes + $2 WHERE article_id = $1 RETURNING *;",
-        [article_id, inc_votes]
+        [article_id, requestBody.inc_votes]
       )
       .then((article) => {
         return article.rows[0];

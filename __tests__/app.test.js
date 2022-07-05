@@ -98,29 +98,40 @@ describe("news api", () => {
               });
           });
       });
-      test("400: returns a 'Bad request. Request must include an inc_votes key with a number value' message if request doesn't contain an inc_votes property", () => {
+      test("400: returns a 'Bad request. Request must be an object' message if request is not an object", () => {
+        const invalidUpdate = ["invalid", 3];
+        return request(app)
+          .patch("/api/articles/1")
+          .send(invalidUpdate)
+          .expect(400)
+          .then(({ body }) => {
+            const badRequest = body.msg;
+            expect(badRequest).toBe("Bad request. Request must be an object");
+          });
+      });
+      test("422: returns an 'Unprocessable Entity. Request must include an inc_votes key with a number value' message if request doesn't contain an inc_votes property", () => {
         const invalidUpdate = { invalid: 3 };
         return request(app)
           .patch("/api/articles/1")
           .send(invalidUpdate)
-          .expect(400)
+          .expect(422)
           .then(({ body }) => {
-            const badRequest = body.msg;
-            expect(badRequest).toBe(
-              "Bad request. Request must include an inc_votes key with a number value"
+            const UnprocessableEnt = body.msg;
+            expect(UnprocessableEnt).toBe(
+              "Unprocessable Entity. Request must include an inc_votes key with a number value"
             );
           });
       });
-      test("400: returns a 'Bad request. Request must include an inc_votes key with a number value' message if request contains an inc_votes value that isn't a number", () => {
+      test("422: returns an 'Unprocessable Entity. Request must include an inc_votes key with a number value' message if request contains an inc_votes value that isn't a number", () => {
         const invalidUpdate = { inc_votes: "sausage" };
         return request(app)
           .patch("/api/articles/1")
           .send(invalidUpdate)
-          .expect(400)
+          .expect(422)
           .then(({ body }) => {
-            const badRequest = body.msg;
-            expect(badRequest).toBe(
-              "Bad request. Request must include an inc_votes key with a number value"
+            const UnprocessableEnt = body.msg;
+            expect(UnprocessableEnt).toBe(
+              "Unprocessable Entity. Request must include an inc_votes key with a number value"
             );
           });
       });
