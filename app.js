@@ -9,9 +9,12 @@ const { getArticle } = require("./controllers/articles.controllers");
 
 const app = express();
 
+app.use(express.json());
+
 app.get("/api/topics", getTopics);
 
 app.get("/api/articles/:article_id", getArticle);
+app.patch("/api/articles/:article_id", updateArticle);
 
 app.use("*", handleBadPaths);
 
