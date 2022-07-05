@@ -51,6 +51,7 @@ describe("news api", () => {
                 "created_at" &&
                 "votes" in articleObj
             ).toBe(true);
+            expect(articleObj.article_id).toBe(1);
           });
       });
       test("404: returns a 'Bad path. Article with given id not found' message if article with given ID is not found in database", () => {
