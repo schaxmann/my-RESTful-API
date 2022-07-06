@@ -48,7 +48,6 @@ describe("news api", () => {
                 "author" in articleObj &&
                   "title" in articleObj &&
                   "article_id" in articleObj &&
-                  "body" in articleObj &&
                   "topic" in articleObj &&
                   "created_at" in articleObj &&
                   "votes" in articleObj &&
