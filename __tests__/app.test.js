@@ -54,6 +54,26 @@ describe("news api", () => {
             expect(articleObj.article_id).toBe(1);
           });
       });
+      test("200: returns an article object, containing author, title, article_id, body, topic, created_at, votes & comment_count properties", () => {
+        return request(app)
+          .get("/api/articles/1")
+          .expect(200)
+          .then(({ body }) => {
+            const articleObj = body.article;
+            expect(
+              "author" in articleObj &&
+                "title" in articleObj &&
+                "article_id" in articleObj &&
+                "body" in articleObj &&
+                "topic" in articleObj &&
+                "created_at" in articleObj &&
+                "votes" in articleObj &&
+                "comment_count" in articleObj
+            ).toBe(true);
+            expect(articleObj.article_id).toBe(1);
+            expect(articleObj.comment_count).toBe(11);
+          });
+      });
       test("404: returns a 'Bad path. Article with given id not found' message if article with given ID is not found in database", () => {
         return request(app)
           .get("/api/articles/99999999")
