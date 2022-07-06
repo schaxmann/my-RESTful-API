@@ -34,6 +34,33 @@ describe("news api", () => {
       });
     });
   });
+  describe("/api/articles", () => {
+    describe("GET", () => {
+      test("200: returns an array of articles, each containing author, title, article_id, body, topic, created_at, votes & comment_count properties in descending date order", () => {
+        return request(app)
+          .get("/api/articles")
+          .expect(200)
+          .then(({ body }) => {
+            const articlesArr = body.articles;
+            expect(articlesArr.length).toBe(12);
+            articlesArr.forEach((articleObj) =>
+              expect(
+                "author" in articleObj &&
+                  "title" in articleObj &&
+                  "article_id" in articleObj &&
+                  "topic" in articleObj &&
+                  "created_at" in articleObj &&
+                  "votes" in articleObj &&
+                  "comment_count" in articleObj
+              ).toBe(true)
+            );
+            expect(articlesArr).toBeSortedBy("created_at", {
+              descending: true,
+            });
+          });
+      });
+    });
+  });
   describe("/api/articles/:article_id", () => {
     describe("GET", () => {
       test("200: returns an article object, containing author, title, article_id, body, topic, created_at & votes properties", () => {
