@@ -137,4 +137,22 @@ describe("news api", () => {
       });
     });
   });
+  describe("/api/users", () => {
+    describe("GET", () => {
+      test("200: returns an array of users objects, each containing username, name & avatar_url properties", () => {
+        return request(app)
+          .get("/api/users")
+          .expect(200)
+          .then(({ body }) => {
+            const usersArr = body.users;
+            expect(usersArr.length).toBe(4);
+            usersArr.forEach((user) =>
+              expect(
+                "username" in user && "name" in user && "avatar_url" in user
+              ).toBe(true)
+            );
+          });
+      });
+    });
+  });
 });

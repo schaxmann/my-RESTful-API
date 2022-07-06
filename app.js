@@ -6,6 +6,7 @@ const {
   handleCustomErrors,
 } = require("./controllers/errors.controllers");
 const { getArticle } = require("./controllers/articles.controllers");
+const { getUsers } = require("./controllers/users.controllers");
 
 const app = express();
 
@@ -15,6 +16,8 @@ app.get("/api/topics", getTopics);
 
 app.get("/api/articles/:article_id", getArticle);
 app.patch("/api/articles/:article_id", updateArticle);
+
+app.get("/api/users", getUsers);
 
 app.use("*", handleBadPaths);
 
