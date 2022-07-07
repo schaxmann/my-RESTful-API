@@ -184,6 +184,46 @@ describe("news api", () => {
       });
     });
   });
+  describe("/api/articles/:article_id/comments", () => {
+    describe("GET", () => {
+      test("200: returns array of comments for given article_id, each containing comment_id, votes, created_at, author and body properties", () => {
+        return request(app)
+          .get("/api/articles/1/comments")
+          .expect(200)
+          .then(({ body }) => {
+            const commentsArr = body.comments;
+            expect(commentsArr.length).toBe(11);
+            commentsArr.forEach((commentObj) =>
+              expect(
+                "comment_id" in commentObj &&
+                  "votes" in commentObj &&
+                  "created_at" in commentObj &&
+                  "author" in commentObj &&
+                  "body" in commentObj
+              ).toBe(true)
+            );
+          });
+      });
+      test("200: returns an empty array of comments for given article_id if article has no comments", () => {
+        return request(app)
+          .get("/api/articles/7/comments")
+          .expect(200)
+          .then(({ body }) => {
+            const commentsArr = body.comments;
+            expect(commentsArr.length).toBe(0);
+          });
+      });
+      test("404: returns a 'Bad path. Article with given id not found' message if article with given ID is not found in database", () => {
+        return request(app)
+          .get("/api/articles/99999999/comments")
+          .expect(404)
+          .then(({ body }) => {
+            const badPath = body.msg;
+            expect(badPath).toBe("Bad path. Article with given id not found");
+          });
+      });
+    });
+  });
   describe("/api/users", () => {
     describe("GET", () => {
       test("200: returns an array of users objects, each containing username, name & avatar_url properties", () => {
