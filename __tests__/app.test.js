@@ -191,6 +191,17 @@ describe("news api", () => {
             expect(badPath).toBe("Bad path. Article with given id not found");
           });
       });
+      test("404: returns a 'Bad path. Article ID should be a number' message if article_id is not a number", () => {
+        const articleUpdateObj = { inc_votes: 25 };
+        return request(app)
+          .patch("/api/articles/nevergonnagiveyouup")
+          .send(articleUpdateObj)
+          .expect(404)
+          .then(({ body }) => {
+            const badPath = body.msg;
+            expect(badPath).toBe("Bad path. Article ID should be a number");
+          });
+      });
     });
   });
   describe("/api/articles/:article_id/comments", () => {
