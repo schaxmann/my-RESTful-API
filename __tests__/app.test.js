@@ -110,7 +110,7 @@ describe("news api", () => {
             expect(badPath).toBe("Bad path. Article with given id not found");
           });
       });
-      test("404: returns a 'Bad path. Article ID should be a number' message if article with given ID is not found in database", () => {
+      test("404: returns a 'Bad path. Article ID should be a number' message if article_id is not a number", () => {
         return request(app)
           .get("/api/articles/nevergonnagiveyouup")
           .expect(404)
@@ -231,7 +231,7 @@ describe("news api", () => {
             expect(badPath).toBe("Bad path. Article with given id not found");
           });
       });
-      test("404: returns a 'Bad path. Article ID should be a number' message if article with given ID is not found in database", () => {
+      test("404: returns a 'Bad path. Article ID should be a number' message if article_id is not a number", () => {
         return request(app)
           .get("/api/articles/nevergonnagiveyouup/comments")
           .expect(404)
