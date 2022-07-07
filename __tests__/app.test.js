@@ -110,6 +110,15 @@ describe("news api", () => {
             expect(badPath).toBe("Bad path. Article with given id not found");
           });
       });
+      test("404: returns a 'Bad path. Article ID should be a number' message if article with given ID is not found in database", () => {
+        return request(app)
+          .get("/api/articles/nevergonnagiveyouup")
+          .expect(404)
+          .then(({ body }) => {
+            const badPath = body.msg;
+            expect(badPath).toBe("Bad path. Article ID should be a number");
+          });
+      });
     });
     describe("PATCH", () => {
       test("200: returns an updated article object, containing author, title, article_id, body, topic, created_at & incremented votes properties", () => {
@@ -220,6 +229,15 @@ describe("news api", () => {
           .then(({ body }) => {
             const badPath = body.msg;
             expect(badPath).toBe("Bad path. Article with given id not found");
+          });
+      });
+      test("404: returns a 'Bad path. Article ID should be a number' message if article with given ID is not found in database", () => {
+        return request(app)
+          .get("/api/articles/nevergonnagiveyouup/comments")
+          .expect(404)
+          .then(({ body }) => {
+            const badPath = body.msg;
+            expect(badPath).toBe("Bad path. Article ID should be a number");
           });
       });
     });

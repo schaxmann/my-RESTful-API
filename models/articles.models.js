@@ -1,6 +1,12 @@
 const db = require("../db/connection");
 
 fetchArticle = (article_id) => {
+  if (isNaN(Number(article_id))) {
+    return Promise.reject({
+      status: 404,
+      msg: "Bad path. Article ID should be a number",
+    });
+  }
   return db
     .query(
       `SELECT articles.*, COUNT(comments.comment_id)::int AS comment_count
