@@ -207,20 +207,22 @@ describe("news api", () => {
   describe("/api/articles/:article_id/comments", () => {
     describe("GET", () => {
       test("200: returns array of comments for given article_id, each containing comment_id, votes, created_at, author and body properties", () => {
+        const article_id = 1;
         return request(app)
-          .get("/api/articles/1/comments")
+          .get(`/api/articles/${article_id}/comments`)
           .expect(200)
           .then(({ body }) => {
             const commentsArr = body.comments;
             expect(commentsArr.length).toBe(11);
-            commentsArr.forEach((commentObj) =>
-              expect(
-                "comment_id" in commentObj &&
-                  "votes" in commentObj &&
-                  "created_at" in commentObj &&
-                  "author" in commentObj &&
-                  "body" in commentObj
-              ).toBe(true)
+            commentsArr.forEach(
+              (commentObj) =>
+                expect(
+                  "comment_id" in commentObj &&
+                    "votes" in commentObj &&
+                    "created_at" in commentObj &&
+                    "author" in commentObj &&
+                    "body" in commentObj
+                ).toBe(true) && expect(commentObj.article_id).toBe(article_id)
             );
           });
       });
