@@ -254,22 +254,138 @@ describe("news api", () => {
           });
       });
     });
-  });
-  describe("/api/users", () => {
-    describe("GET", () => {
-      test("200: returns an array of users objects, each containing username, name & avatar_url properties", () => {
+    describe("POST", () => {
+      test("201: returns a comment that has been added to the database, containing author, article_id, body, comment_id, created_at & votes properties", () => {
+        const newPost = { username: "butter_bridge", body: "test" };
+        const articleID = 1;
+        return db
+          .query(
+            `SELECT *
+          FROM comments 
+          WHERE article_id = $1`,
+            [articleID]
+          )
+          .then((originalComments) => {
+            return request(app)
+              .post(`/api/articles/${articleID}/comments`)
+              .send(newPost)
+              .expect(201)
+              .then(({ body }) => {
+                const commmentObj = body.comment;
+                expect(
+                  "author" in commmentObj &&
+                    "article_id" in commmentObj &&
+                    "body" in commmentObj &&
+                    "comment_id" in commmentObj &&
+                    "created_at" in commmentObj &&
+                    "votes" in commmentObj
+                ).toBe(true);
+                expect(commmentObj.article_id).toBe(articleID);
+              })
+              .then(() => {
+                return db.query(
+                  `SELECT *
+                  FROM comments 
+                  WHERE article_id = $1`,
+                  [articleID]
+                );
+              })
+              .then((finalComments) => {
+                expect(finalComments.rows.length).toBe(
+                  originalComments.rows.length + 1
+                );
+              });
+          });
+      });
+      test("400: returns a 'Bad request. Request must be an object including username and body properties' message if request doesn't contain one of the properties", () => {
+        const newPost = { user: "butter_bridge", body: "test" };
         return request(app)
-          .get("/api/users")
-          .expect(200)
+          .post("/api/articles/1/comments")
+          .send(newPost)
+          .expect(400)
           .then(({ body }) => {
-            const usersArr = body.users;
-            expect(usersArr.length).toBe(4);
-            usersArr.forEach((user) =>
-              expect(
-                "username" in user && "name" in user && "avatar_url" in user
-              ).toBe(true)
+            const badRequest = body.msg;
+            expect(badRequest).toBe(
+              "Bad request. Request must be an object including username and body properties"
             );
           });
+      });
+      test("400: returns a 'Bad request. Request must be an object including username and body properties' message if request doesn't contain either of the properties", () => {
+        const newPost = {};
+        return request(app)
+          .post("/api/articles/1/comments")
+          .send(newPost)
+          .expect(400)
+          .then(({ body }) => {
+            const badRequest = body.msg;
+            expect(badRequest).toBe(
+              "Bad request. Request must be an object including username and body properties"
+            );
+          });
+      });
+      test("400: returns a 'Bad request. Request must be an object including username and body properties' message if request isn't an object", () => {
+        const newPost = "invalid";
+        return request(app)
+          .post("/api/articles/1/comments")
+          .send(newPost)
+          .expect(400)
+          .then(({ body }) => {
+            const badRequest = body.msg;
+            expect(badRequest).toBe(
+              "Bad request. Request must be an object including username and body properties"
+            );
+          });
+      });
+      test("400: returns a 'Bad request. User is not registered' message if username is not found in the database", () => {
+        const newPost = { username: "randomguy", body: "test" };
+        return request(app)
+          .post("/api/articles/1/comments")
+          .send(newPost)
+          .expect(400)
+          .then(({ body }) => {
+            const badRequest = body.msg;
+            expect(badRequest).toBe("Bad request. User is not registered");
+          });
+      });
+      test("404: returns a 'Bad path. Article with given id not found' message if article with given ID is not found in database", () => {
+        const newPost = { username: "butter_bridge", body: "test" };
+        return request(app)
+          .post("/api/articles/9999999/comments")
+          .send(newPost)
+          .expect(404)
+          .then(({ body }) => {
+            const badPath = body.msg;
+            expect(badPath).toBe("Bad path. Article with given id not found");
+          });
+      });
+      test("404: returns a 'Bad path. Article ID should be a number' message if article_id is not a number", () => {
+        const newPost = { username: "butter_bridge", body: "test" };
+        return request(app)
+          .post("/api/articles/banana/comments")
+          .send(newPost)
+          .expect(404)
+          .then(({ body }) => {
+            const badPath = body.msg;
+            expect(badPath).toBe("Bad path. Article ID should be a number");
+          });
+      });
+    });
+    describe("/api/users", () => {
+      describe("GET", () => {
+        test("200: returns an array of users objects, each containing username, name & avatar_url properties", () => {
+          return request(app)
+            .get("/api/users")
+            .expect(200)
+            .then(({ body }) => {
+              const usersArr = body.users;
+              expect(usersArr.length).toBe(4);
+              usersArr.forEach((user) =>
+                expect(
+                  "username" in user && "name" in user && "avatar_url" in user
+                ).toBe(true)
+              );
+            });
+        });
       });
     });
   });

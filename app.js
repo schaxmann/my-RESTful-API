@@ -11,7 +11,10 @@ const {
   updateArticle,
 } = require("./controllers/articles.controllers");
 const { getUsers } = require("./controllers/users.controllers");
-const { getComments } = require("./controllers/comments.controllers");
+const {
+  getComments,
+  addComment,
+} = require("./controllers/comments.controllers");
 
 const app = express();
 
@@ -24,6 +27,7 @@ app.get("/api/articles/:article_id", getArticle);
 app.patch("/api/articles/:article_id", updateArticle);
 
 app.get("/api/articles/:article_id/comments", getComments);
+app.post("/api/articles/:article_id/comments", addComment);
 
 app.get("/api/users", getUsers);
 
