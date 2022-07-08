@@ -60,15 +60,60 @@ patchArticle = (article_id, requestBody) => {
   }
 };
 
-fetchAllArticles = () => {
+fetchAllArticles = (queries) => {
+  const sortBy = queries.sort_by || "created_at";
+  const order = queries.order || "desc";
+  const topic = queries.topic;
+
+  if (
+    ![
+      "author",
+      "title",
+      "article_id",
+      "topic",
+      "created_at",
+      "votes",
+      "comment_count",
+    ].includes(sortBy.toLowerCase())
+  ) {
+    return Promise.reject({
+      status: 400,
+      msg: "Bad request. Invalid sort query",
+    });
+  }
+
+  if (!["asc", "desc"].includes(order.toLowerCase())) {
+    return Promise.reject({
+      status: 400,
+      msg: "Bad request. Invalid order query",
+    });
+  }
+
+  if (!topic) {
+    return db
+      .query(
+        `SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes
+      , COUNT(comments.comment_id)::int AS comment_count
+  FROM articles
+  LEFT JOIN comments ON comments.article_id = articles.article_id
+  GROUP BY articles.article_id
+  ORDER BY ${sortBy} ${order};`
+      )
+      .then((articles) => {
+        return articles.rows;
+      });
+  }
+
   return db
     .query(
       `SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes
       , COUNT(comments.comment_id)::int AS comment_count
-  FROM articles 
+  FROM articles
   LEFT JOIN comments ON comments.article_id = articles.article_id
+  WHERE articles.topic = $1
   GROUP BY articles.article_id
-  ORDER BY created_at DESC;`
+  ORDER BY ${sortBy} ${order};`,
+      [topic.toLowerCase()]
     )
     .then((articles) => {
       return articles.rows;
