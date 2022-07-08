@@ -571,4 +571,19 @@ describe("news api", () => {
       });
     });
   });
+  // describe("/api/comments/:comment_id", () => {
+  //   describe("DELETE", () => {
+  //     test("204:deletes relevant comment, returning nothing", () => {
+  //       return request(app)
+  //         .delete(`/api/comments/2`)
+  //         .expect(204)
+  //         .then(({ body }) => {
+  //           expect(body).toBe(undefined);
+  //         })
+  //         .then(() => {
+  //           expect(fetchComments(9)).toBe(1);
+  //         });
+  //     });
+  //   });
+  // });
 });

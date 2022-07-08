@@ -14,6 +14,7 @@ const { getUsers } = require("./controllers/users.controllers");
 const {
   getComments,
   addComment,
+  removeComment,
 } = require("./controllers/comments.controllers");
 
 const app = express();
@@ -30,6 +31,8 @@ app.get("/api/articles/:article_id/comments", getComments);
 app.post("/api/articles/:article_id/comments", addComment);
 
 app.get("/api/users", getUsers);
+
+// app.delete("/api/comments/:comment_id", removeComment);
 
 app.use("*", handleBadPaths);
 
