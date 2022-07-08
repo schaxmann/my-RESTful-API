@@ -110,13 +110,13 @@ describe("news api", () => {
             expect(badPath).toBe("Bad path. Article with given id not found");
           });
       });
-      test("404: returns a 'Bad path. Article ID should be a number' message if article_id is not a number", () => {
+      test("400: returns a 'Bad request. Article ID should be a number' message if article_id is not a number", () => {
         return request(app)
           .get("/api/articles/nevergonnagiveyouup")
-          .expect(404)
+          .expect(400)
           .then(({ body }) => {
-            const badPath = body.msg;
-            expect(badPath).toBe("Bad path. Article ID should be a number");
+            const badReq = body.msg;
+            expect(badReq).toBe("Bad request. Article ID should be a number");
           });
       });
     });
@@ -191,15 +191,15 @@ describe("news api", () => {
             expect(badPath).toBe("Bad path. Article with given id not found");
           });
       });
-      test("404: returns a 'Bad path. Article ID should be a number' message if article_id is not a number", () => {
+      test("400: returns a 'Bad request. Article ID should be a number' message if article_id is not a number", () => {
         const articleUpdateObj = { inc_votes: 25 };
         return request(app)
           .patch("/api/articles/nevergonnagiveyouup")
           .send(articleUpdateObj)
-          .expect(404)
+          .expect(400)
           .then(({ body }) => {
-            const badPath = body.msg;
-            expect(badPath).toBe("Bad path. Article ID should be a number");
+            const badReq = body.msg;
+            expect(badReq).toBe("Bad request. Article ID should be a number");
           });
       });
     });
@@ -244,13 +244,13 @@ describe("news api", () => {
             expect(badPath).toBe("Bad path. Article with given id not found");
           });
       });
-      test("404: returns a 'Bad path. Article ID should be a number' message if article_id is not a number", () => {
+      test("400: returns a 'Bad request. Article ID should be a number' message if article_id is not a number", () => {
         return request(app)
           .get("/api/articles/nevergonnagiveyouup/comments")
-          .expect(404)
+          .expect(400)
           .then(({ body }) => {
-            const badPath = body.msg;
-            expect(badPath).toBe("Bad path. Article ID should be a number");
+            const badReq = body.msg;
+            expect(badReq).toBe("Bad request. Article ID should be a number");
           });
       });
     });
@@ -336,15 +336,15 @@ describe("news api", () => {
             );
           });
       });
-      test("400: returns a 'Bad request. User is not registered' message if username is not found in the database", () => {
+      test("404: returns a 'Not found. User is not registered' message if username is not found in the database", () => {
         const newPost = { username: "randomguy", body: "test" };
         return request(app)
           .post("/api/articles/1/comments")
           .send(newPost)
-          .expect(400)
+          .expect(404)
           .then(({ body }) => {
-            const badRequest = body.msg;
-            expect(badRequest).toBe("Bad request. User is not registered");
+            const notFound = body.msg;
+            expect(notFound).toBe("Not found. User is not registered");
           });
       });
       test("404: returns a 'Bad path. Article with given id not found' message if article with given ID is not found in database", () => {
@@ -358,15 +358,15 @@ describe("news api", () => {
             expect(badPath).toBe("Bad path. Article with given id not found");
           });
       });
-      test("404: returns a 'Bad path. Article ID should be a number' message if article_id is not a number", () => {
+      test("400: returns a 'Bad request. Article ID should be a number' message if article_id is not a number", () => {
         const newPost = { username: "butter_bridge", body: "test" };
         return request(app)
           .post("/api/articles/banana/comments")
           .send(newPost)
-          .expect(404)
+          .expect(400)
           .then(({ body }) => {
-            const badPath = body.msg;
-            expect(badPath).toBe("Bad path. Article ID should be a number");
+            const badReq = body.msg;
+            expect(badReq).toBe("Bad request. Article ID should be a number");
           });
       });
     });

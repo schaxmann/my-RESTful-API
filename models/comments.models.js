@@ -32,8 +32,8 @@ postComment = (article_id, requestBody) => {
     .then((userCheck) => {
       if (userCheck.rows.length === 0) {
         return Promise.reject({
-          status: 400,
-          msg: "Bad request. User is not registered",
+          status: 404,
+          msg: "Not found. User is not registered",
         });
       }
     })
