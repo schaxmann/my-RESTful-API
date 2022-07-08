@@ -36,7 +36,7 @@ describe("news api", () => {
   });
   describe("/api/articles", () => {
     describe("GET", () => {
-      test("200: returns an array of articles, each containing author, title, article_id, body, topic, created_at, votes & comment_count properties in descending date order", () => {
+      test("200: returns an array of articles, each containing author, title, article_id, body, topic, created_at, votes & comment_count properties in descending date order as default", () => {
         return request(app)
           .get("/api/articles")
           .expect(200)
@@ -57,6 +57,188 @@ describe("news api", () => {
             expect(articlesArr).toBeSortedBy("created_at", {
               descending: true,
             });
+          });
+      });
+      test("200: returns an array of articles in ascending created_on order when relevant queries are added", () => {
+        return request(app)
+          .get("/api/articles/?order=asc")
+          .expect(200)
+          .then(({ body }) => {
+            const articlesArr = body.articles;
+            expect(articlesArr.length).toBe(12);
+            articlesArr.forEach((articleObj) =>
+              expect(
+                "author" in articleObj &&
+                  "title" in articleObj &&
+                  "article_id" in articleObj &&
+                  "topic" in articleObj &&
+                  "created_at" in articleObj &&
+                  "votes" in articleObj &&
+                  "comment_count" in articleObj
+              ).toBe(true)
+            );
+            expect(articlesArr).toBeSortedBy("created_at");
+          });
+      });
+      test("200: returns an array of articles ordered by another column with number values, default descending", () => {
+        return request(app)
+          .get("/api/articles/?sort_by=votes")
+          .expect(200)
+          .then(({ body }) => {
+            const articlesArr = body.articles;
+            expect(articlesArr.length).toBe(12);
+            articlesArr.forEach((articleObj) =>
+              expect(
+                "author" in articleObj &&
+                  "title" in articleObj &&
+                  "article_id" in articleObj &&
+                  "topic" in articleObj &&
+                  "created_at" in articleObj &&
+                  "votes" in articleObj &&
+                  "comment_count" in articleObj
+              ).toBe(true)
+            );
+            expect(articlesArr).toBeSortedBy("votes", {
+              descending: true,
+            });
+          });
+      });
+      test("200: returns an array of articles using another column with number value in ascending order when relevant queries are added", () => {
+        return request(app)
+          .get("/api/articles/?sort_by=votes&order=ASC")
+          .expect(200)
+          .then(({ body }) => {
+            const articlesArr = body.articles;
+            expect(articlesArr.length).toBe(12);
+            articlesArr.forEach((articleObj) =>
+              expect(
+                "author" in articleObj &&
+                  "title" in articleObj &&
+                  "article_id" in articleObj &&
+                  "topic" in articleObj &&
+                  "created_at" in articleObj &&
+                  "votes" in articleObj &&
+                  "comment_count" in articleObj
+              ).toBe(true)
+            );
+            expect(articlesArr).toBeSortedBy("votes");
+          });
+      });
+      test("200: returns an array of articles using a column with string values in ascending order when relevant queries are added", () => {
+        function compare(a, b) {
+          const titleA = a.title;
+          const titleB = b.title;
+          let comparison = 0;
+          if (titleA > titleB) {
+            comparison = 1;
+          } else if (titleA < titleB) {
+            comparison = -1;
+          }
+          return comparison;
+        }
+        return request(app)
+          .get("/api/articles/?sort_by=title&order=asc")
+          .expect(200)
+          .then(({ body }) => {
+            const articlesArr = body.articles;
+            expect(articlesArr.length).toBe(12);
+            articlesArr.forEach((articleObj) =>
+              expect(
+                "author" in articleObj &&
+                  "title" in articleObj &&
+                  "article_id" in articleObj &&
+                  "topic" in articleObj &&
+                  "created_at" in articleObj &&
+                  "votes" in articleObj &&
+                  "comment_count" in articleObj
+              ).toBe(true)
+            );
+            articlesArrCopy = [...articlesArr];
+            sortedArticlesArrCopy = articlesArrCopy.sort(compare);
+            expect(sortedArticlesArrCopy).toEqual(articlesArr);
+          });
+      });
+      test("200: returns an array of articles using a column with string values in desc order when relevant queries are added", () => {
+        function compare(a, b) {
+          const titleA = a.title;
+          const titleB = b.title;
+          let comparison = 0;
+          if (titleA > titleB) {
+            comparison = -1;
+          } else if (titleA < titleB) {
+            comparison = 1;
+          }
+          return comparison;
+        }
+        return request(app)
+          .get("/api/articles/?sort_by=title")
+          .expect(200)
+          .then(({ body }) => {
+            const articlesArr = body.articles;
+            expect(articlesArr.length).toBe(12);
+            articlesArr.forEach((articleObj) =>
+              expect(
+                "author" in articleObj &&
+                  "title" in articleObj &&
+                  "article_id" in articleObj &&
+                  "topic" in articleObj &&
+                  "created_at" in articleObj &&
+                  "votes" in articleObj &&
+                  "comment_count" in articleObj
+              ).toBe(true)
+            );
+            articlesArrCopy = [...articlesArr];
+            sortedArticlesArrCopy = articlesArrCopy.sort(compare);
+            expect(sortedArticlesArrCopy).toEqual(articlesArr);
+          });
+      });
+      test("200: returns an array of articles filtered by topic when relevant queries are added", () => {
+        return request(app)
+          .get("/api/articles/?sort_by=votes&order=asc&topic=mitch")
+          .expect(200)
+          .then(({ body }) => {
+            const articlesArr = body.articles;
+            expect(articlesArr.length).toBe(11);
+            articlesArr.forEach(
+              (articleObj) =>
+                expect(
+                  "author" in articleObj &&
+                    "title" in articleObj &&
+                    "article_id" in articleObj &&
+                    "topic" in articleObj &&
+                    "created_at" in articleObj &&
+                    "votes" in articleObj &&
+                    "comment_count" in articleObj
+                ).toBe(true) && expect(topic).toBe("mitch")
+            );
+            expect(articlesArr).toBeSortedBy("votes");
+          });
+      });
+      test("200: returns an array empty array if there are no articles with given topic query", () => {
+        return request(app)
+          .get("/api/articles/?sort_by=votes&order=asc&topic=adjdoaijd")
+          .expect(200)
+          .then(({ body }) => {
+            const articlesArr = body.articles;
+            expect(articlesArr).toEqual([]);
+          });
+      });
+      test("400: returns a 'Bad request. Invalid sort query' when sort query is anything other than a valid column name", () => {
+        return request(app)
+          .get("/api/articles/?sort_by=watermelon&order=asc&topic=mitch")
+          .expect(400)
+          .then(({ body }) => {
+            const badReq = body.msg;
+            expect(badReq).toBe("Bad request. Invalid sort query");
+          });
+      });
+      test("400: returns a 'Bad request. Invalid order query' when order query is anything other than asc or desc in any case", () => {
+        return request(app)
+          .get("/api/articles/?sort_by=votes&order=food&topic=mitch")
+          .expect(400)
+          .then(({ body }) => {
+            const badReq = body.msg;
+            expect(badReq).toBe("Bad request. Invalid order query");
           });
       });
     });
