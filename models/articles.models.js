@@ -3,8 +3,8 @@ const db = require("../db/connection");
 fetchArticle = (article_id) => {
   if (isNaN(Number(article_id))) {
     return Promise.reject({
-      status: 404,
-      msg: "Bad path. Article ID should be a number",
+      status: 400,
+      msg: "Bad request. Article ID should be a number",
     });
   } else {
     return db
@@ -31,8 +31,8 @@ fetchArticle = (article_id) => {
 patchArticle = (article_id, requestBody) => {
   if (isNaN(Number(article_id))) {
     return Promise.reject({
-      status: 404,
-      msg: "Bad path. Article ID should be a number",
+      status: 400,
+      msg: "Bad request. Article ID should be a number",
     });
   } else if (
     !requestBody.inc_votes ||
