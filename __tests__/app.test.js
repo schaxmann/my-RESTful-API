@@ -587,3 +587,35 @@ describe("news api", () => {
   //   });
   // });
 });
+describe("/api/comments", () => {
+  describe("GET", () => {
+    test("200: returns an array of comment objects containing comment_id, body, article_id, author, votes & created_at properties", () => {
+      return request(app)
+        .get("/api/comments")
+        .expect(200)
+        .then(({ body }) => {
+          const commentsArr = body.comments;
+          expect(commentsArr.length).toBe(18);
+          commentsArr.forEach((comment) =>
+            expect(
+              "comment_id" in comment &&
+                "body" in comment &&
+                "article_id" in comment &&
+                "author" in comment &&
+                "votes" in comment &&
+                "created_at" in comment
+            ).toBe(true)
+          );
+        });
+    });
+    test("404: handles bad paths", () => {
+      return request(app)
+        .get("/api/comment")
+        .expect(404)
+        .then(({ body }) => {
+          const notFound = body.msg;
+          expect(notFound).toBe("Requested content not found");
+        });
+    });
+  });
+});

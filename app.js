@@ -36,7 +36,7 @@ app.post("/api/articles/:article_id/comments", addComment);
 
 app.get("/api/users", getUsers);
 
-app.get("/api/comments/:comment_id", getAllComments);
+app.get("/api/comments", getAllComments);
 // app.delete("/api/comments/:comment_id", removeComment);
 
 app.use("*", handleBadPaths);
