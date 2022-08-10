@@ -27,6 +27,18 @@ addComment = (req, res, next) => {
     });
 };
 
+getAllComments = (req, res, next) => {
+  fetchAllComments()
+    .then((comments) => {
+      res.status(200).send({ comments });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+module.exports = { getTopics };
+
 removeComment = (req, res, next) => {
   const { comment_id } = req.params;
   deleteComment(comment_id)
@@ -38,4 +50,4 @@ removeComment = (req, res, next) => {
     });
 };
 
-module.exports = { getComments, addComment, removeComment };
+module.exports = { getComments, addComment, removeComment, getAllComments };

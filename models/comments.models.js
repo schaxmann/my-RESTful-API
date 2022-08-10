@@ -77,4 +77,15 @@ deleteComment = (comment_id) => {
   }
 };
 
-module.exports = { fetchComments, postComment, deleteComment };
+fetchAllComments = () => {
+  return db.query(`SELECT * FROM comments;`).then((comments) => {
+    return comments.rows;
+  });
+};
+
+module.exports = {
+  fetchComments,
+  postComment,
+  deleteComment,
+  fetchAllComments,
+};
