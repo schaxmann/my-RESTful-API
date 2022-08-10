@@ -2,6 +2,7 @@ const {
   fetchComments,
   postComment,
   deleteComment,
+  fetchOneComment,
 } = require("../models/comments.models");
 
 getComments = (req, res, next) => {
@@ -37,7 +38,16 @@ getAllComments = (req, res, next) => {
     });
 };
 
-module.exports = { getTopics };
+getOneComment = (req, res, next) => {
+  const { comment_id } = req.params;
+  fetchOneComment(comment_id)
+    .then((comment) => {
+      res.status(200).send({ comment });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
 
 removeComment = (req, res, next) => {
   const { comment_id } = req.params;
@@ -50,4 +60,10 @@ removeComment = (req, res, next) => {
     });
 };
 
-module.exports = { getComments, addComment, removeComment, getAllComments };
+module.exports = {
+  getComments,
+  addComment,
+  removeComment,
+  getAllComments,
+  getOneComment,
+};

@@ -58,22 +58,13 @@ deleteComment = (comment_id) => {
       msg: "Bad request. Comment ID should be a number",
     });
   } else {
-    return db
-      .query(
+    return fetchOneComment(comment_id).then(() => {
+      return db.query(
         `DELETE FROM comments
-        WHERE comment_id = $1
-        RETURNING *`,
+        WHERE comment_id = $1`,
         [comment_id]
-      )
-      .then((deletedComment) => {
-        if (!deletedComment[0]) {
-          return Promise.reject({
-            status: 404,
-            msg: "Bad path. Comment with given id not found",
-          });
-        }
-        return article.rows[0];
-      });
+      );
+    });
   }
 };
 
@@ -83,9 +74,29 @@ fetchAllComments = () => {
   });
 };
 
+fetchOneComment = (comment_id) => {
+  return db
+    .query(
+      `SELECT *
+      FROM comments 
+      WHERE comment_id = $1`,
+      [comment_id]
+    )
+    .then((comment) => {
+      if (!comment.rows[0]) {
+        return Promise.reject({
+          status: 404,
+          msg: "Comment not found.",
+        });
+      }
+      return comment.rows[0];
+    });
+};
+
 module.exports = {
   fetchComments,
   postComment,
   deleteComment,
   fetchAllComments,
+  fetchOneComment,
 };

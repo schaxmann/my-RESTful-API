@@ -571,21 +571,56 @@ describe("news api", () => {
       });
     });
   });
-  // describe("/api/comments/:comment_id", () => {
-  //   describe("DELETE", () => {
-  //     test("204:deletes relevant comment, returning nothing", () => {
-  //       return request(app)
-  //         .delete(`/api/comments/2`)
-  //         .expect(204)
-  //         .then(({ body }) => {
-  //           expect(body).toBe(undefined);
-  //         })
-  //         .then(() => {
-  //           expect(fetchComments(9)).toBe(1);
-  //         });
-  //     });
-  //   });
-  // });
+  describe("/api/comments/:comment_id", () => {
+    describe("DELETE", () => {
+      test("204:deletes relevant comment, returning nothing", () => {
+        return request(app)
+          .delete(`/api/comments/1`)
+          .expect(204)
+          .then(({ body }) => {
+            expect(body).toEqual({});
+          })
+          .then(() => {
+            return request(app)
+              .get(`/api/comments/1`)
+              .expect(404)
+              .then(({ body }) => {
+                expect(body.msg).toBe("Comment not found.");
+              });
+          });
+      });
+    });
+    describe("GET", () => {
+      test("200: returning relevant comment", () => {
+        return request(app)
+          .get(`/api/comments/12`)
+          .expect(200)
+          .then(({ body }) => {
+            const comment = body.comment;
+            expect(
+              "article_id" in comment &&
+                "author" in comment &&
+                "body" in comment &&
+                "comment_id" in comment &&
+                "created_at" in comment &&
+                "votes" in comment
+            ).toBe(true);
+            return comment;
+          })
+          .then((comment) => {
+            expect(comment.comment_id).toBe(12);
+          });
+      });
+      test("200: returning relevant comment", () => {
+        return request(app)
+          .get(`/api/comments/520`)
+          .expect(404)
+          .then(({ body }) => {
+            expect(body.msg).toBe("Comment not found.");
+          });
+      });
+    });
+  });
 });
 describe("/api/comments", () => {
   describe("GET", () => {

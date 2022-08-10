@@ -16,6 +16,7 @@ const {
   addComment,
   removeComment,
   getAllComments,
+  getOneComment,
 } = require("./controllers/comments.controllers");
 const cors = require("cors");
 
@@ -37,7 +38,10 @@ app.post("/api/articles/:article_id/comments", addComment);
 app.get("/api/users", getUsers);
 
 app.get("/api/comments", getAllComments);
-// app.delete("/api/comments/:comment_id", removeComment);
+app.get("/api/comments/:comment_id", getOneComment);
+app.delete("/api/comments/:comment_id", removeComment);
+
+app.get("/api", getOneComment);
 
 app.use("*", handleBadPaths);
 
