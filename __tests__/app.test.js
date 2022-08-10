@@ -654,3 +654,36 @@ describe("/api/comments", () => {
     });
   });
 });
+describe("/api", () => {
+  describe("GET", () => {
+    test("200: returns a JSON outlining endpoints, with example requests and responses", () => {
+      return request(app)
+        .get("/api")
+        .expect(200)
+        .then(({ body }) => {
+          expect(
+            "GET /api" in body.endpoints &&
+              "GET /api/topics" in body.endpoints &&
+              "GET /api/articles" in body.endpoints &&
+              "GET /api/articles/:article_id" in body.endpoints &&
+              "PATCH /api/articles/:article_id" in body.endpoints &&
+              "GET /api/articles/:article_id/comments" in body.endpoints &&
+              "POST /api/articles/:article_id/comments" in body.endpoints &&
+              "GET /api/users" in body.endpoints &&
+              "GET /api/comments" in body.endpoints &&
+              "GET /api/comments/:comment_id" in body.endpoints &&
+              "DELETE /api/comments/:comment_id" in body.endpoints
+          ).toBe(true);
+        });
+    });
+    test("404: handles bad paths", () => {
+      return request(app)
+        .get("/apy")
+        .expect(404)
+        .then(({ body }) => {
+          const notFound = body.msg;
+          expect(notFound).toBe("Requested content not found");
+        });
+    });
+  });
+});

@@ -1,6 +1,7 @@
 {
   "GET /api": {
-    "description": "serves up a json representation of all the available endpoints of the api"
+    "description": "serves up a json representation of all the available endpoints of the api",
+    "exampleResponse": "surprisingly similar to this JSON"
   },
   "GET /api/topics": {
     "description": "serves an array of all topics",
@@ -23,5 +24,148 @@
         }
       ]
     }
+  },
+  "GET /api/articles/:article_id": {
+    "description": "serves a specific article object",
+    "queries": [],
+    "exampleResponse": {
+      "article": [
+        {
+          "article_id": 1,
+          "title": "Seafood substitutions are increasing",
+          "topic": "cooking",
+          "author": "weegembump",
+          "body": "Text from the article..",
+          "created_at": 1527695953341,
+          "votes": 12,
+          "comment_count": 2
+        }
+      ]
+    }
+  },
+  "PATCH /api/articles/:article_id": {
+    "description": "allows article votes value to be updated",
+    "queries": [],
+    "exampleRequest ": { "inc_votes": 1 },
+    "exampleResponse": {
+      "article": [
+        {
+          "article_id": 1,
+          "title": "Seafood substitutions are increasing",
+          "topic": "cooking",
+          "author": "weegembump",
+          "body": "Text from the article..",
+          "created_at": 1527695953341,
+          "votes": 13,
+          "comment_count": 2
+        }
+      ]
+    }
+  },
+  "GET /api/articles/:article_id/comments": {
+    "description": "serves an array of comments associated with a given article",
+    "queries": [],
+    "exampleResponse": {
+      "comments": [
+        {
+          "comment_id": 2,
+          "body": "Replacing the quiet elegance of the dark suit and tie with the casual indifference of these muted earth tones is a form of fashion suicide, but, uh, call me crazy — onyou it works.",
+          "votes": 100,
+          "author": "icellusedkars",
+          "article_id": 1,
+          "created_at": 1583025180000
+        },
+        {
+          "comment_id": 3,
+          "body": " I carry a log — yes. Is it funny to you? It is not to me.",
+          "votes": -100,
+          "author": "icellusedkars",
+          "article_id": 1,
+          "created_at": 1582459260000
+        }
+      ]
+    }
+  },
+  "POST /api/articles/:article_id/comments": {
+    "description": "allows comment to be posted to article",
+    "queries": [],
+    "exampleRequest ": { "username": "butter_bridge", "body": "test" },
+    "exampleResponse": {
+      "comment": [
+        {
+          "comment_id": 22,
+          "body": "test",
+          "votes": 0,
+          "author": "butter_bridge",
+          "article_id": 1,
+          "created_at": 1582459260000
+        }
+      ]
+    }
+  },
+  "GET /api/users": {
+    "description": "serves an array of all users",
+    "queries": [],
+    "exampleResponse": {
+      "users": [
+        {
+          "user_id": 1,
+          "username": "butter_bridge",
+          "name": "jonny",
+          "avatar_url": "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
+        },
+        {
+          "user_id": 2,
+          "username": "icellusedkars",
+          "name": "sam",
+          "avatar_url": "https://avatars2.githubusercontent.com/u/24604688?s=460&v=4"
+        }
+      ]
+    }
+  },
+  "GET /api/comments": {
+    "description": "serves an array of all comments",
+    "queries": [],
+    "exampleResponse": {
+      "comments": [
+        {
+          "body": "The beautiful thing about treasure is that it exists. Got to find out what kind of sheets these are; not cotton, not rayon, silky.",
+          "votes": 14,
+          "author": "butter_bridge",
+          "article_id": 1,
+          "created_at": 1604113380000,
+          "comment_id": 15
+        },
+        {
+          "body": "Replacing the quiet elegance of the dark suit and tie with the casual indifference of these muted earth tones is a form of fashion suicide, but, uh, call me crazy — onyou it works.",
+          "votes": 100,
+          "author": "icellusedkars",
+          "article_id": 1,
+          "created_at": 1583025180000,
+          "comment_id": 16
+        }
+      ]
+    }
+  },
+  "GET /api/comments/:comment_id": {
+    "description": "serves a specific comment object",
+    "queries": [],
+    "exampleResponse": {
+      "comment": [
+        {
+          "body": "Replacing the quiet elegance of the dark suit and tie with the casual indifference of these muted earth tones is a form of fashion suicide, but, uh, call me crazy — onyou it works.",
+          "votes": 100,
+          "author": "icellusedkars",
+          "article_id": 1,
+          "created_at": 1583025180000,
+          "comment_id": 16
+        }
+      ]
+    }
+  },
+  "DELETE /api/comments/:comment_id": {
+    "description": "deletes a specific comment",
+    "queries": [],
+    "exampleResponse": {}
   }
 }
