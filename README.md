@@ -1,12 +1,12 @@
 # Schaxmann News API
 
-## Hosted API
+## Hosted RESTful API
 
-<font size="4">Hosted on Heroku [here](https://schaxmann-news.herokuapp.com/)</font>
+<font size="4">Hosted on Heroku [here](https://schaxmann-news.herokuapp.com/api).</font>
 
 ## Project Summary
 
-This project is a reddit-style news website which allows users to explore, sort, open, comment on and upvote articles.
+This project is the RESTful api backend for a reddit-style news website which allows users to explore, sort, open, comment on and upvote articles.
 
 ## Cloning the Repo
 
